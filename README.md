@@ -35,7 +35,7 @@ The repository organizes images for these denominations:
 ## Repository structure
 
 ```text
-thai-bank-detection/
+thai-banknote-detection/
 ├── twentyBaht/          # Images for 20 Baht banknotes
 ├── fiftyBaht/           # Images for 50 Baht banknotes
 ├── hundredBaht/         # Images for 100 Baht banknotes
@@ -86,3 +86,20 @@ This project was developed as part of an Artificial Intelligence course and demo
 ## Status
 
 Academic / experimental project. The repository is useful as a dataset-preparation and YOLOv8 learning reference, but it should not be treated as a production-grade currency recognition or financial verification system.
+
+## Reproduce a training experiment
+
+Use the linked Colab notebook for the original course workflow. This repository does not include a finalized `data.yaml`, canonical train/validation split, pinned training environment, or released model weights. The following commands describe a new experiment after you prepare those inputs; they do not reproduce a published benchmark.
+
+1. Record the exact Python and Ultralytics versions used by your notebook; keep that environment with your experiment results.
+2. Export bounding-box labels in YOLO format and prepare `images/train`, `images/val`, `labels/train`, and `labels/val` directories. Keep each image and its label in the same split.
+3. Create `data.yaml` with your dataset location, train/validation paths, and the class IDs used by your annotations. Verify class order instead of assuming that directory order determines label IDs.
+4. Install the Ultralytics version selected for your experiment, then run an explicit model configuration, for example:
+
+```bash
+yolo detect train model=yolov8n.pt data=data.yaml epochs=50 imgsz=640
+yolo detect val model=runs/detect/train/weights/best.pt data=data.yaml
+yolo detect predict model=runs/detect/train/weights/best.pt source=path/to/unseen-banknote.jpg
+```
+
+Replace the input path and generated run directory as needed. These commands download/use the chosen pretrained model and require a prepared dataset. Save the environment versions, dataset counts/splits, training arguments, precision, recall, mAP metrics, and representative detection images together. No new accuracy claim or generated detection example is supplied by this documentation update. Review image provenance and usage rights before redistributing a derived dataset.
